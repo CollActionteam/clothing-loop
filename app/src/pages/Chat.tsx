@@ -399,6 +399,11 @@ export default function Chat() {
           handler: () => UseChatCreateEdit.onOpenCreateChannel("edit"),
         },
         {
+          text: t("delete"),
+          role: "destructive",
+          handler: () => UseChatCreateEdit.onChannelOptionSelect("delete"),
+        },
+        {
           text: t("cancel"),
           role: "cancel",
         },
@@ -450,12 +455,6 @@ export default function Chat() {
               onSelectOldBulkyItems={onSelectOldBulkyItems}
               onOpenCreateChannel={UseChatCreateEdit.onOpenCreateChannel}
               onChannelOptionSelect={UseChatCreateEdit.onChannelOptionSelect}
-              isChannelActionSheetOpen={
-                UseChatRoomActions.isChannelActionSheetOpen
-              }
-              setIsChannelActionSheetOpen={
-                UseChatRoomActions.setIsChannelActionSheetOpen
-              }
             />
           </div>
 

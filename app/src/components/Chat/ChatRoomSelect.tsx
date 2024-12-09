@@ -14,8 +14,6 @@ interface Props {
   selectedOldBulkyItems: boolean;
   onSelectOldBulkyItems: () => void;
   onChannelOptionSelect: (value: "delete" | "rename") => void;
-  isChannelActionSheetOpen: boolean;
-  setIsChannelActionSheetOpen: (_: boolean) => void;
 }
 
 export default function ChatRoomSelect({
@@ -26,20 +24,8 @@ export default function ChatRoomSelect({
   selectedOldBulkyItems,
   onSelectOldBulkyItems,
   onOpenCreateChannel,
-  setIsChannelActionSheetOpen,
 }: Props) {
   const { t } = useTranslation();
-
-  const longPressChannel = useLongPress(
-    (e) => {
-      setIsChannelActionSheetOpen(true);
-    },
-    {
-      onCancel: (e) => {
-        setIsChannelActionSheetOpen(false);
-      },
-    },
-  );
 
   return (
     <div className="tw-shrink-0 w-full tw-flex tw-gap-1 tw-overflow-x-auto tw-bg-light">
@@ -82,13 +68,7 @@ export default function ChatRoomSelect({
               isSelected ? " tw-bg-light-shade" : "",
             )}
             key={cr.id}
-            {...(isSelected
-              ? isChainAdmin
-                ? longPressChannel(isSelected)
-                : {}
-              : {
-                  onClick: () => onSelectChannel(cr),
-                })}
+            onClick={() => onSelectChannel(cr)}
           >
             <div
               style={{ backgroundColor: cr.header || "#fff" }}
