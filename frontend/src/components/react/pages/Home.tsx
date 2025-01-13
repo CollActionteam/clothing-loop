@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Counters from "../components/Counters/Counters";
 import Carousel from "../components/Carousel";
 import Testimonials from "../components/Testimonials";
@@ -9,6 +9,7 @@ import useLocalizePath from "../util/localize_path.hooks";
 import useHydrated from "../util/hydrated.hooks";
 import { $authUser } from "../../../stores/auth";
 import getLanguages from "../../../languages";
+import { chainGetLargest } from "../../../api/chain";
 
 const IS_PRODUCTION =
   import.meta.env.PUBLIC_BASE_URL === "https://www.clothingloop.org";
@@ -21,11 +22,16 @@ interface Supporter {
   alt: string;
   class: string;
 }
-
+interface TopLoop {
+  name: string;
+  description: string;
+  number_of_participants: number;
+}
 export default function Home() {
   const { t, i18n } = useTranslation();
   const localizePath = useLocalizePath(i18n);
   const ref = useRef() as any;
+  const [topLoops, setTopLoops] = useState<TopLoop[]>();
 
   const isVisible = useIntersectionObserver(ref, {
     root: null,
@@ -44,6 +50,28 @@ export default function Home() {
       window.location.href = localizePath("/", lang);
     }
   });
+  async function fetchLargestLoops() {
+    try {
+      const largest_loops = await chainGetLargest();
+      setTopLoops(largest_loops.data);
+    } catch (err: any) {
+      console.warn(err);
+    }
+  }
+
+  useEffect(() => {
+    fetchLargestLoops();
+  }, []);
+
+  const maxInput = topLoops ? topLoops[0].number_of_participants : 100;
+  const minInput = topLoops ? topLoops[9].number_of_participants : 50;
+
+  function adjustValue(inputValue: number) {
+    const range = 9 - 5;
+    return range + ((inputValue - minInput) / (maxInput - minInput)) * range;
+  }
+
+  const maxOuput = adjustValue(maxInput) / 0.9;
 
   const supporters: Supporter[] = [
     {
@@ -262,6 +290,38 @@ export default function Home() {
                 </h2>
                 <p className="text-lg">{t("getReadyToSwapMessage")}</p>
               </div>
+            </div>
+          </div>
+        </section>
+        <section className="mb-12 md:mb-24">
+          <div className="flex flex-col md:flex-row mx-6">
+            <iframe
+              className="w-full h-[800px] px-6 overflow-hidden border-8 border-secondary sm:w-[600px] aspect-video mx-auto mb-16"
+              scrolling="no"
+              id="instagram-embed"
+              src="https://www.instagram.com/p/DDZ5jrdxoRy/embed"
+            ></iframe>
+            <div className="mx-auto my-auto w-full md:w-1/2 px-6">
+              {topLoops?.map((tp) => {
+                const value = adjustValue(tp.number_of_participants);
+                return (
+                  <div className="mb-4">
+                    <div className="flex justify-between">
+                      <div className="font-bold text-sm truncate">
+                        {tp.name}
+                      </div>
+                      <div className="text-xs min-w-24 text-right">
+                        {tp.number_of_participants} {t("participants")}
+                      </div>
+                    </div>
+                    <progress
+                      className="progress progress-secondary w-full"
+                      value={value}
+                      max={maxOuput}
+                    ></progress>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>

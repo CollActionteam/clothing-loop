@@ -145,6 +145,7 @@ func Routes() *gin.Engine {
 	v2.PATCH("/chain/user/note", controllers.ChainChangeUserNote)
 	v2.GET("/chain/user/note", controllers.ChainGetUserNote)
 	v2.PATCH("/chain/user/warden", controllers.ChainChangeUserWarden)
+	v2.GET("/chain/largest", controllers.ChainGetLargest)
 
 	// chat
 	v2.PATCH("/chat/user", controllers.ChatPatchUser)
