@@ -30,7 +30,7 @@ require (
 	github.com/wneessen/go-mail v0.4.4
 	golang.design/x/go2generics v0.0.1
 	golang.org/x/crypto v0.31.0
-	golang.org/x/net v0.28.0
+	golang.org/x/net v0.33.0
 	gopkg.in/guregu/null.v3 v3.5.0
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.11
